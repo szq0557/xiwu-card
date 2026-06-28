@@ -1,432 +1,115 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>惜物工坊 - 管理后台</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="admin-body">
-    <div class="admin-login" id="loginSection">
-        <div class="login-box">
-            <h2>惜物工坊管理后台</h2>
-            <p class="login-subtitle">请输入管理密码</p>
-            <div class="form-group">
-                <input type="password" id="adminPassword" placeholder="请输入管理密码" autocomplete="off">
-            </div>
-            <button class="btn-primary btn-block" onclick="adminLogin()">登录</button>
-            <p class="login-error" id="loginError"></p>
-        </div>
-    </div>
+const companyInfo = {
+    name: "惜物工坊",
+    slogan: "匠心传承 · 物尽其用",
+    description: "专注于传统手工艺与现代设计的完美融合",
+    founded: 2018,
+    address: "中国·某某市某某区惜物路88号",
+    phone: "400-888-8888",
+    email: "hello@xiwugongfang.com",
+    wechat: "xiwugongfang2018"
+};
 
-    <div class="admin-layout" id="adminLayout" style="display: none;">
-        <aside class="admin-sidebar">
-            <div class="sidebar-logo">
-                <span class="logo-icon">🏺</span>
-                <span class="logo-text">惜物工坊</span>
-            </div>
-            <nav class="sidebar-menu">
-                <a href="javascript:void(0)" class="menu-item active" data-page="dashboard" onclick="switchPage('dashboard', this)">
-                    <span class="menu-icon">📊</span>
-                    <span class="menu-text">数据看板</span>
-                </a>
-                <a href="javascript:void(0)" class="menu-item" data-page="products" onclick="switchPage('products', this)">
-                    <span class="menu-icon">📦</span>
-                    <span class="menu-text">产品管理</span>
-                </a>
-                <a href="javascript:void(0)" class="menu-item" data-page="content" onclick="switchPage('content', this)">
-                    <span class="menu-icon">📝</span>
-                    <span class="menu-text">内容设置</span>
-                </a>
-                <a href="javascript:void(0)" class="menu-item" data-page="settings" onclick="switchPage('settings', this)">
-                    <span class="menu-icon">⚙️</span>
-                    <span class="menu-text">系统设置</span>
-                </a>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="index.html" class="menu-item" target="_blank">
-                    <span class="menu-icon">🏠</span>
-                    <span class="menu-text">查看前台</span>
-                </a>
-                <a href="javascript:void(0)" class="menu-item" onclick="adminLogout()">
-                    <span class="menu-icon">🚪</span>
-                    <span class="menu-text">退出登录</span>
-                </a>
-            </div>
-        </aside>
+const products = [
+    {
+        id: 1,
+        name: "手工陶瓷茶杯",
+        category: "陶瓷系列",
+        priceMin: 198,
+        priceMax: 398,
+        hasVideo: false,
+        image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=handmade%20ceramic%20tea%20cup%20traditional%20chinese%20style%20elegant&image_size=square_hd",
+        images: [
+            "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=handmade%20ceramic%20tea%20cup%20traditional%20chinese%20style%20elegant&image_size=square_hd",
+            "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=ceramic%20tea%20cup%20detail%20shot%20glaze%20texture%20closeup&image_size=square_hd"
+        ],
+        videoUrl: "",
+        description: "采用传统手拉坯工艺，经1280度高温烧制而成。每一件都是独一无二的艺术品，手感温润，品茗佳品。",
+        features: ["手工拉坯", "原矿釉料", "独一无二"],
+        specs: ["容量：200ml", "材质：高岭土", "工艺：手工拉坯"]
+    },
+    {
+        id: 2,
+        name: "竹编收纳篮",
+        category: "竹编系列",
+        priceMin: 128,
+        priceMax: 268,
+        hasVideo: false,
+        image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=handwoven%20bamboo%20storage%20basket%20traditional%20craft%20natural&image_size=square_hd",
+        images: [
+            "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=handwoven%20bamboo%20storage%20basket%20traditional%20craft%20natural&image_size=square_hd"
+        ],
+        videoUrl: "",
+        description: "精选安吉高山毛竹，由老艺人手工编织。纹理细腻，结实耐用，兼具实用性与装饰性。",
+        features: ["天然竹材", "手工编织", "环保实用"],
+        specs: ["尺寸：30x20x15cm", "材质：安吉毛竹", "工艺：手工编织"]
+    },
+    {
+        id: 3,
+        name: "檀木书签套装",
+        category: "木艺系列",
+        priceMin: 88,
+        priceMax: 258,
+        hasVideo: false,
+        image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=sandalwood%20bookmark%20set%20chinese%20traditional%20carved%20wood&image_size=square_hd",
+        images: [
+            "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=sandalwood%20bookmark%20set%20chinese%20traditional%20carved%20wood&image_size=square_hd"
+        ],
+        videoUrl: "",
+        description: "选用名贵小叶紫檀，纯手工雕刻打磨。木纹细腻，香气淡雅，是文人雅士的收藏佳品。",
+        features: ["名贵檀木", "手工雕刻", "收藏级"],
+        specs: ["材质：小叶紫檀", "工艺：手工雕刻", "套装：2支装"]
+    },
+    {
+        id: 4,
+        name: "苏绣手帕",
+        category: "刺绣系列",
+        priceMin: 288,
+        priceMax: 588,
+        hasVideo: true,
+        image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=suzhou%20embroidery%20handkerchief%20silk%20floral%20pattern%20traditional%20chinese&image_size=square_hd",
+        images: [
+            "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=suzhou%20embroidery%20handkerchief%20silk%20floral%20pattern%20traditional%20chinese&image_size=square_hd"
+        ],
+        videoUrl: "",
+        description: "非遗苏绣工艺，绣娘手工一针一线绣制。图案精美，丝线光泽细腻，是馈赠佳品。",
+        features: ["非遗工艺", "手工刺绣", "真丝面料"],
+        specs: ["尺寸：30x30cm", "材质：桑蚕丝", "工艺：手工苏绣"]
+    },
+    {
+        id: 5,
+        name: "青瓷花瓶",
+        category: "陶瓷系列",
+        priceMin: 388,
+        priceMax: 888,
+        hasVideo: true,
+        image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=celadon%20porcelain%20vase%20chinese%20traditional%20elegant%20green%20glaze&image_size=square_hd",
+        images: [
+            "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=celadon%20porcelain%20vase%20chinese%20traditional%20elegant%20green%20glaze&image_size=square_hd"
+        ],
+        videoUrl: "",
+        description: "龙泉青瓷传统烧制技艺，粉青釉色温润如玉。器型典雅，是家居装饰的点睛之笔。",
+        features: ["龙泉青瓷", "粉青釉色", "经典器型"],
+        specs: ["高度：25cm", "材质：龙泉青瓷", "工艺：1300度烧制"]
+    },
+    {
+        id: 6,
+        name: "棉麻布艺抱枕",
+        category: "布艺系列",
+        priceMin: 68,
+        priceMax: 158,
+        hasVideo: false,
+        image: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cotton%20linen%20throw%20pillow%20natural%20fabric%20minimalist%20cozy&image_size=square_hd",
+        images: [
+            "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cotton%20linen%20throw%20pillow%20natural%20fabric%20minimalist%20cozy&image_size=square_hd"
+        ],
+        videoUrl: "",
+        description: "天然棉麻面料，植物染色，手工缝制。亲肤透气，为家居增添自然温馨的氛围。",
+        features: ["天然棉麻", "植物染色", "手工缝制"],
+        specs: ["尺寸：45x45cm", "材质：棉麻混纺", "工艺：手工缝制"]
+    }
+];
 
-        <main class="admin-main">
-            <div class="page-container" id="pageDashboard">
-                <div class="page-header">
-                    <h2>📊 数据看板</h2>
-                    <p class="page-desc">查看网站访问数据和用户行为分析</p>
-                </div>
-                <div class="stats-cards">
-                    <div class="stat-card">
-                        <div class="stat-icon">👁️</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="totalVisits">0</div>
-                            <div class="stat-label">总访问量</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📅</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="todayVisits">0</div>
-                            <div class="stat-label">今日访问</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⏱️</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="avgDuration">0s</div>
-                            <div class="stat-label">平均停留</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📱</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="mobileRate">0%</div>
-                            <div class="stat-label">移动端占比</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="chart-section">
-                    <div class="chart-card">
-                        <h3>最近7天访问趋势</h3>
-                        <div class="chart-container" id="weekChart"></div>
-                    </div>
-                    <div class="chart-card">
-                        <h3>访问来源分布</h3>
-                        <div class="chart-container" id="sourceChart"></div>
-                    </div>
-                </div>
-                <div class="records-section">
-                    <div class="section-header">
-                        <h3>访问记录明细</h3>
-                        <div class="filter-group">
-                            <input type="text" id="searchInput" placeholder="搜索..." oninput="filterRecords()">
-                        </div>
-                    </div>
-                    <div class="records-table-wrapper">
-                        <table class="records-table">
-                            <thead>
-                                <tr>
-                                    <th>序号</th>
-                                    <th>访问时间</th>
-                                    <th>来源页面</th>
-                                    <th>设备类型</th>
-                                    <th>停留时长</th>
-                                    <th>浏览深度</th>
-                                    <th>点击产品</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recordsTableBody">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="pagination"></div>
-                </div>
-            </div>
-
-            <div class="page-container" id="pageProducts" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h2>📦 产品管理</h2>
-                        <p class="page-desc">管理前台展示的产品信息，支持添加、编辑、删除</p>
-                    </div>
-                    <button class="btn-primary" onclick="openProductEditor()">+ 添加产品</button>
-                </div>
-                <div class="products-manage">
-                    <div class="manage-toolbar">
-                        <span class="product-count">共 <strong id="productCount">0</strong> 个产品</span>
-                        <div class="filter-group">
-                            <input type="text" id="productSearch" placeholder="搜索产品..." oninput="filterProducts()">
-                        </div>
-                    </div>
-                    <div class="products-list" id="productsList">
-                    </div>
-                </div>
-            </div>
-
-            <div class="page-container" id="pageContent" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h2>📝 内容设置</h2>
-                        <p class="page-desc">修改公司介绍、联系方式等页面内容</p>
-                    </div>
-                </div>
-                <div class="content-tabs">
-                    <button class="content-tab active" data-tab="company" onclick="switchContentTab('company', this)">公司信息</button>
-                    <button class="content-tab" data-tab="about" onclick="switchContentTab('about', this)">关于我们</button>
-                    <button class="content-tab" data-tab="contact" onclick="switchContentTab('contact', this)">联系方式</button>
-                    <button class="content-tab" data-tab="share" onclick="switchContentTab('share', this)">分享设置</button>
-                </div>
-                <div class="content-panels">
-                    <div class="content-panel" id="panelCompany">
-                        <div class="form-card">
-                            <h3>基本信息</h3>
-                            <div class="form-row">
-                                <label>公司名称</label>
-                                <input type="text" id="companyName" placeholder="请输入公司名称">
-                            </div>
-                            <div class="form-row">
-                                <label>品牌标语</label>
-                                <input type="text" id="companySlogan" placeholder="例如：匠心传承 · 物尽其用">
-                            </div>
-                            <div class="form-row">
-                                <label>简短描述</label>
-                                <input type="text" id="companyDesc" placeholder="一句话介绍公司">
-                            </div>
-
-                        </div>
-                        <div class="form-actions">
-                            <button class="btn-primary" onclick="saveCompanyInfo()">保存设置</button>
-                        </div>
-                    </div>
-                    <div class="content-panel" id="panelAbout" style="display: none;">
-                        <div class="form-card">
-                            <h3>关于我们</h3>
-                            <div class="form-row">
-                                <label>介绍段落1</label>
-                                <textarea id="aboutText1" rows="4" placeholder="第一段介绍文字"></textarea>
-                            </div>
-                            <div class="form-row">
-                                <label>介绍段落2</label>
-                                <textarea id="aboutText2" rows="4" placeholder="第二段介绍文字（可选）"></textarea>
-                            </div>
-                            <h4 style="margin-top: 24px;">三大特点</h4>
-                            <div class="form-row">
-                                <label>特点1 - 图标(emoji)</label>
-                                <input type="text" id="feature1Icon" placeholder="例如：🎨" value="🎨">
-                            </div>
-                            <div class="form-row">
-                                <label>特点1 - 标题</label>
-                                <input type="text" id="feature1Title" placeholder="例如：匠心设计">
-                            </div>
-                            <div class="form-row">
-                                <label>特点1 - 描述</label>
-                                <input type="text" id="feature1Desc" placeholder="简短描述">
-                            </div>
-                            <div class="form-row">
-                                <label>特点2 - 图标(emoji)</label>
-                                <input type="text" id="feature2Icon" placeholder="例如：🌿" value="🌿">
-                            </div>
-                            <div class="form-row">
-                                <label>特点2 - 标题</label>
-                                <input type="text" id="feature2Title" placeholder="例如：天然材质">
-                            </div>
-                            <div class="form-row">
-                                <label>特点2 - 描述</label>
-                                <input type="text" id="feature2Desc" placeholder="简短描述">
-                            </div>
-                            <div class="form-row">
-                                <label>特点3 - 图标(emoji)</label>
-                                <input type="text" id="feature3Icon" placeholder="例如：✨" value="✨">
-                            </div>
-                            <div class="form-row">
-                                <label>特点3 - 标题</label>
-                                <input type="text" id="feature3Title" placeholder="例如：品质保证">
-                            </div>
-                            <div class="form-row">
-                                <label>特点3 - 描述</label>
-                                <input type="text" id="feature3Desc" placeholder="简短描述">
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button class="btn-primary" onclick="saveAboutContent()">保存设置</button>
-                        </div>
-                    </div>
-                    <div class="content-panel" id="panelContact" style="display: none;">
-                        <div class="form-card">
-                            <h3>联系方式</h3>
-
-                            <div class="form-row">
-                                <label>电话</label>
-                                <input type="text" id="contactPhone" placeholder="联系电话">
-                            </div>
-
-                            <div class="form-row">
-                                <label>微信号</label>
-                                <input type="text" id="contactWechat" placeholder="微信号">
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button class="btn-primary" onclick="saveContactInfo()">保存设置</button>
-                        </div>
-                    </div>
-                    <div class="content-panel" id="panelShare" style="display: none;">
-                        <div class="form-card">
-                            <h3>分享卡片设置</h3>
-                            <p class="form-tip">设置微信等平台分享时显示的卡片信息</p>
-                            <div class="form-row">
-                                <label>分享标题</label>
-                                <input type="text" id="shareTitle" placeholder="分享时显示的标题">
-                            </div>
-                            <div class="form-row">
-                                <label>分享描述</label>
-                                <textarea id="shareDesc" rows="3" placeholder="分享时显示的描述文字"></textarea>
-                            </div>
-                            <div class="form-row">
-                                <label>分享图片URL</label>
-                                <div style="display: flex; gap: 8px;">
-                                    <input type="text" id="shareImage" placeholder="封面图片链接" style="flex: 1;">
-                                    <button type="button" class="btn-small btn-info" onclick="uploadImage('shareImage')">上传图片</button>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <label>网站地址URL</label>
-                                <input type="text" id="shareUrl" placeholder="https://你的域名.com">
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button class="btn-primary" onclick="saveShareSettings()">保存设置</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page-container" id="pageSettings" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h2>⚙️ 系统设置</h2>
-                        <p class="page-desc">数据备份、恢复和密码管理</p>
-                    </div>
-                </div>
-                <div class="settings-grid">
-                    <div class="setting-card">
-                        <h3>🔐 修改管理密码</h3>
-                        <p class="setting-desc">定期更换密码，保障后台安全</p>
-                        <div class="form-row">
-                            <label>当前密码</label>
-                            <input type="password" id="oldPassword" placeholder="请输入当前密码">
-                        </div>
-                        <div class="form-row">
-                            <label>新密码</label>
-                            <input type="password" id="newPassword" placeholder="请输入新密码">
-                        </div>
-                        <div class="form-row">
-                            <label>确认新密码</label>
-                            <input type="password" id="confirmPassword" placeholder="再次输入新密码">
-                        </div>
-                        <button class="btn-primary" onclick="changePassword()">修改密码</button>
-                    </div>
-                    <div class="setting-card">
-                        <h3>💾 数据管理</h3>
-                        <p class="setting-desc">导出或导入所有配置数据，方便备份和迁移</p>
-                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                            <button class="btn-secondary" onclick="exportAllData()">导出全部数据</button>
-                            <label class="btn-secondary" style="cursor: pointer;">
-                                导入数据
-                                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importAllData(event)">
-                            </label>
-                        </div>
-                        <div style="margin-top: 20px;">
-                            <button class="btn-danger" onclick="resetAllData()">恢复默认数据</button>
-                        </div>
-                    </div>
-                    <div class="setting-card">
-                        <h3>🗑️ 访问记录</h3>
-                        <p class="setting-desc">管理访问记录数据</p>
-                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                            <button class="btn-secondary" onclick="exportData()">导出访问记录</button>
-                            <button class="btn-danger" onclick="clearData()">清空访问记录</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <div class="modal" id="detailModal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>访问详情</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="detailContent">
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="productEditorModal" style="display: none;">
-        <div class="modal-content modal-large">
-            <div class="modal-header">
-                <h3 id="productEditorTitle">添加产品</h3>
-                <button class="modal-close" onclick="closeProductEditor()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-row">
-                    <label>产品名称 *</label>
-                    <input type="text" id="editProductName" placeholder="请输入产品名称">
-                </div>
-                <div class="form-row">
-                    <label>产品分类</label>
-                    <input type="text" id="editProductCategory" placeholder="例如：陶瓷系列">
-                </div>
-                <div class="form-row">
-                    <label>价格范围</label>
-                    <div class="price-inputs">
-                        <input type="number" id="editPriceMin" placeholder="最低价">
-                        <span style="color: #95a5a6;">—</span>
-                        <input type="number" id="editPriceMax" placeholder="最高价">
-                        <span style="color: #95a5a6; font-size: 12px;">（相同为单价格，只填最低价显示"起"）</span>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <label>封面图URL *</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="editProductImage" placeholder="产品主图链接" style="flex: 1;">
-                        <button type="button" class="btn-small btn-info" onclick="uploadImage('editProductImage')">上传图片</button>
-                    </div>
-                    <div id="imagePreview" style="margin-top: 10px; display: none;">
-                        <img id="previewImage" src="" alt="预览" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #eee;">
-                        <button type="button" class="btn-small btn-danger" style="margin-left: 12px;" onclick="clearPreview()">删除</button>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <label>更多图片（每行一个URL）</label>
-                    <div style="display: flex; gap: 8px;">
-                        <textarea id="editProductImages" rows="4" placeholder="每行一张图片链接" style="flex: 1;"></textarea>
-                        <button type="button" class="btn-small btn-info" onclick="uploadImage('editProductImages')" style="height: fit-content;">上传图片</button>
-                    </div>
-                <div class="form-row">
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="editHasVideo" onchange="toggleVideoInput()">
-                        包含视频
-                    </label>
-                </div>
-                <div class="form-row" id="videoInputRow" style="display: none;">
-                    <label>B站视频链接</label>
-                    <input type="text" id="editVideoUrl" placeholder="粘贴B站视频链接，如 https://www.bilibili.com/video/BV1xx411c7mD">
-                    <p style="font-size: 12px; color: #95a5a6; margin-top: 6px;">
-                        💡 先到 bilibili.com 上传视频，然后把视频链接粘贴到这里
-                    </p>
-                </div>
-                <div class="form-row">
-                    <label>产品描述</label>
-                    <textarea id="editProductDesc" rows="4" placeholder="详细介绍产品"></textarea>
-                </div>
-                <div class="form-row">
-                    <label>产品特点（用逗号分隔）</label>
-                    <input type="text" id="editProductFeatures" placeholder="例如：手工制作,天然材质,品质保证">
-                </div>
-                <div class="form-row">
-                    <label>规格参数（用逗号分隔）</label>
-                    <input type="text" id="editProductSpecs" placeholder="例如：尺寸：20cm,材质：陶瓷,工艺：手工">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeProductEditor()">取消</button>
-                <button class="btn-primary" onclick="saveProduct()">保存</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script src="js/data.js"></script>
-    <script src="js/admin.js"></script>
-</body>
-</html>
+const adminConfig = {
+    password: "admin123",
+    visitRecordStorageKey: "xiwu_visit_records"
+};
